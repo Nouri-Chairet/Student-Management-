@@ -1,0 +1,86 @@
+const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+const { Schema } = mongoose;
+
+const userSchema = new Schema({
+    _id: false,
+    userId: { type: Number, unique: true },
+    name: String,
+    role: { type: String, enum: ['admin', 'teacher'] },
+    login: String,
+    password: String
+});
+
+const studentSchema = new Schema({
+    _id: false,
+    studentId: { type: Number, unique: true },
+    name: String,
+    status: String
+});
+
+const sessionSchema = new Schema({
+    _id: false,
+    sessionId: { type: Number, unique: true },
+    teacherId: { type: Number, ref: 'User' },
+    subject: String,
+    time: String,
+    room: String,
+    classId: { type: Number, ref: 'Class' }
+});
+
+const classSchema = new Schema({
+    _id: false,
+    classId: { type: Number, unique: true },
+    level: { type: Number, min: 1, max: 4 },
+    section: { type: String, enum: ['Trunc Commun', 'Science', 'Info', 'Tech', 'Math', 'letter'] },
+    num: Number,
+    students: [studentSchema],
+});
+
+const registerSchema = new Schema({
+    _id: false,
+    registerId: { type: Number, unique: true },
+    classId: { type: Number, ref: 'Class' },
+    sessionId: { type: Number, ref: 'Session' },
+    teacherId: { type: Number, ref: 'User' },
+    students: [studentSchema]
+});
+
+userSchema.plugin(AutoIncrement, { inc_field: 'userId' });
+studentSchema.plugin(AutoIncrement, { inc_field: 'studentId' });
+sessionSchema.plugin(AutoIncrement, { inc_field: 'sessionId' });
+classSchema.plugin(AutoIncrement, { inc_field: 'classId' });
+registerSchema.plugin(AutoIncrement, { inc_field: 'registerId' });
+
+module.exports = {
+    User: mongoose.model('User', userSchema),
+    Student: mongoose.model('Student', studentSchema),
+    Session: mongoose.model('Session', sessionSchema),
+    Class: mongoose.model('Class', classSchema),
+    Register: mongoose.model('Register', registerSchema)
+};
+/*
+ * This file contains instructions for creating a new repository and pushing code to GitHub using the terminal.
+ * 
+ * Steps:
+ * 1. Open your terminal.
+ * 2. Navigate to the directory where your project is located.
+ *    Example: `cd /path/to/your/project`
+ * 3. Initialize a new Git repository:
+ *    `git init`
+ * 4. Add all files to the staging area:
+ *    `git add .`
+ * 5. Commit the files with a message:
+ *    `git commit -m "Initial commit"`
+ * 6. Create a new repository on GitHub.
+ *    - Go to GitHub and log in to your account.
+ *    - Click on the "+" icon in the top right corner and select "New repository".
+ *    - Fill in the repository name and other details, then click "Create repository".
+ * 7. Link your local repository to the GitHub repository:
+ *    `git remote add origin https://github.com/your-username/your-repo-name.git`
+ * 8. Push the code to the GitHub repository:
+ *    `git push -u origin master`
+ * 
+ * Note: Replace `your-username` and `your-repo-name` with your actual GitHub username and repository name.
+ */
+// No additional code needed here for creating a new repo and pushing it to GitHub
